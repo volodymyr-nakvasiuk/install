@@ -1,1 +1,1 @@
-# install
+# Installation scripts for my apps
