@@ -154,7 +154,7 @@ installMahmee() {
         mkdir -p $folder
         cd $folder
 
-        logProcess "Cloning repo"
+        logProcess "Cloning docker configs repo"
         git clone git@bitbucket.org:mahmee/ci-cd.git mahmee.localhost
         cd ./mahmee.localhost
     fi
@@ -164,7 +164,11 @@ installMahmee() {
         . ./config
     fi
 
+    # Making scripts executable (just in case)
     chmod -R a+x $BIN_FOLDER/
+
+    logProcess "Cloning all services repos"
+    $BIN_FOLDER/checkout -b master
 
     logProcess "This process make take up to 20 minutes" "Downloading docker images, service's sources and libraries"
     $BIN_FOLDER/init --new-cert
