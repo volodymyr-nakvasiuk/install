@@ -73,16 +73,23 @@ installDockerMac() {
     if ! command -v docker &>/dev/null; then
         logProcess "Installing Docker" "Please, follow the instructions"
         brew cask install docker
-
-        runDockerGuiMac
     else
         logSkipped "Docker already installed"
     fi
 }
 
 runDockerGuiMac() {
-    logProcess "Please return to this terminal after" "Opening Docker GUI"
-    open -a Docker
+    #Open Docker, only if is not running
+    if (! docker stats --no-stream); then
+        # On Mac OS this would be the terminal command to launch Docker
+        open -a Docker
+        #Wait until Docker daemon is running and has completed initialisation
+        while (! docker stats --no-stream); do
+            # Docker takes a few seconds to initialize
+            logProcess "Waiting for Docker to launch"
+            sleep 2
+        done
+    fi
 }
 
 installMkCert() {
@@ -235,9 +242,10 @@ forLinux() {
 
 forMac() {
     installHomeBrew
-    installDockerMac
-    installMkCert
     installGit
+    installMkCert
+    installDockerMac
+    runDockerGuiMac
     installSshKeys addSshPublicKeyMac
 
     installMahmee
